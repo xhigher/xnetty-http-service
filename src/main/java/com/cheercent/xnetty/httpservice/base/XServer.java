@@ -18,8 +18,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
-import io.netty.util.concurrent.DefaultThreadFactory;
 
 /*
  * @copyright (c) xhigher 2015 
@@ -38,8 +36,7 @@ public final class XServer {
     private EventLoopGroup bossGroup = null;
     private EventLoopGroup workerGroup = null;
 	protected ServerBootstrap bootstrap = null;
-	private DefaultEventExecutorGroup executorGroup = null;
-    
+	
     private int soRcvbuf = 1024 * 128;
     private int soSndbuf = 1024 * 128;
     
@@ -59,7 +56,6 @@ public final class XServer {
 	}
 
 	public void start() {
-		executorGroup = new DefaultEventExecutorGroup(8, new DefaultThreadFactory("bizEventExecutorGroup"));
 		bossGroup = new NioEventLoopGroup(1);
         workerGroup = new NioEventLoopGroup(10);
 		try {
@@ -97,9 +93,6 @@ public final class XServer {
 
 	public void stop() {
 		XRedis.close();
-		if(executorGroup != null){
-			executorGroup.shutdownGracefully();
-		}
 		if(bossGroup!=null){
 			bossGroup.shutdownGracefully();
 		}
